@@ -89,7 +89,7 @@ AccessoriesCartItem.belongsTo(Accessories);
 
 // 確保 Web Server 運行之前，與資料庫的連接已完成
 database
-	.sync({ force: false})
+	.sync({ force:false})
 	.then((result) => {
 		// 輸入產品資料庫
 		// Product.bulkCreate(products);

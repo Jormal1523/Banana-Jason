@@ -6,6 +6,7 @@ const cookie = require('js-cookie');
 
 // 自己建立的module
 const User = require("../models/user.js")// 使用資料庫
+const isLogin = require("../AuthGuard/isLogin.js")// 使用資料庫
 const rootPath = path.resolve(__dirname,'..'); //取得上一層路徑位置  
 
 
@@ -70,6 +71,20 @@ router.post('/logout', (req, res) => {
 
 
 //需要有登入才可以顯示,
+
+// 路由首位還需要嗎
+router.get('/shopcart' ,(req, res) => {
+  if (req.session.email) {
+    console.log('authenticated')
+    res.status(200).sendFile(path.join(rootPath, 'dist', 'index.html'));
+    next()
+  } 
+  else {
+    console.log('not authenticated')
+    res.status(200).sendFile(path.join(rootPath, 'dist', 'index.html'));
+  }
+})
+
 router.post('/shopcart', (req, res) => {
 	if (req.session.email) {
 		console.log('authenticated')

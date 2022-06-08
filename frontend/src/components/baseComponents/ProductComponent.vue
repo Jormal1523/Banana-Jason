@@ -18,11 +18,11 @@
 	                    <h2>add cart</h2>
 	                    <div class="qty-button">
 	                        <div class="input-group qty">
-	                            <button class="btn btn-outline-secondary"> - </button>
-	                            <input type="text" class="form-control text-center" value="0" disabled>
-	                            <button class="btn btn-outline-secondary"> + </button>
+	                            <button class="btn btn-outline-secondary" @click="removeNubmer()"> - </button>
+	                            <input type="text" class="form-control text-center" v-model= "number">
+	                            <button class="btn btn-outline-secondary" @click="addNumber()"> + </button>
 	                        </div>
-	                        <button class="btn btn-outline-success mt-2 w-100">加入購物車</button>
+	                        <button class="btn btn-outline-success mt-2 w-100" @click="addToCart(cartItemId, cartName, id)"> 加入購物車</button>
 	                    </div>
 	                </div>
 	            </div>
@@ -54,9 +54,53 @@
 	  	return{
 	  		id: this.$route.params.productID,
 	  		cartName: this.$route.params.productName,
-				cartItemId: this.$route.params.productItemID,
+			cartItemId: this.$route.params.productItemID,
 	  		cartItem:{},
+	  		number: 1
 	  	}
+	  },
+	  computed:{
+	    cart(){
+	      return this.$store.state.cart 
+	    },
+	  },	  
+	  methods:{
+	  	addNumber(){
+	  		if(this.number < 10){
+				this.number++;
+	  		}
+	  	},
+	  	removeNubmer(){
+	  		if(this.number > 0){
+				this.number--;
+	  		}
+	  	},
+	    addToCart(cartItemId, parentName, parentIndex){
+	      let data = {
+	        cartItemId: cartItemId,
+	        parentName: parentName,
+	        //  parentIndex == parentId
+	        parentIndex: parentIndex,
+	        number: 1
+	      }
+	      if(this.number > 1){
+	      	data.number = this.number
+	      }
+	      // 判斷有沒有加入，有了就將數量加一
+	      for(let i = 0; i <= this.cart.length - 1; i++){
+	        if((this.cart[i].cartItemId == data.cartItemId) &&  this.cart[i].number < 10) {
+				this.$store.commit('addNumber', data)
+	          	alert(`此商品已經購買${this.cart[i].number}件`)
+	          	return false
+	        }
+	        else if(this.cart[i].cartItemId == data.cartItemId &&  this.cart[i].number == 10) {
+	        	alert(`最多只能購買10件!`)
+	        	return false
+	        }
+	      }
+	      this.$store.commit('addCart', data)
+	      alert(`成功加入購物車!`)
+	    }
 	  },
 	  mounted(){
 	  	const vm = this

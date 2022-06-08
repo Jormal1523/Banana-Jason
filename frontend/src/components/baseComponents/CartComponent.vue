@@ -7,7 +7,7 @@
       <div class="card-body">
         <h5 class="card-title">{{ parentProduct.title }}</h5>
         <p class="card-text">{{ parentProduct.price }}</p>
-        <button class="btn btn-primary">加入購物車</button>
+        <button class="btn btn-primary" @click="addToCart(item.id, parentName, parentIndex)">加入購物車</button>
       </div>
   </div>
           <button  class="btnColor" v-for="(item, index) of parentProduct.cartItems" :style="{background: item.color}" @click="changeImg(item.color)" >
@@ -27,11 +27,37 @@ export default {
       chooseColor: this.parentProduct.cartItems[0].color
     }
   },
+  computed:{
+    cart(){
+      return this.$store.state.cart 
+    },
+  },
   methods:{
     changeImg(data){
       this.chooseColor = data 
     },
-    addToCart(){
+    addToCart(cartItemId, parentName, parentIndex){
+      let data = {
+        cartItemId: cartItemId,
+        parentName: parentName,
+        //  parentIndex == parentId
+        parentIndex: parentIndex,
+        number: 1
+      }
+        // 判斷有沒有加入，有了就將數量加一
+        for(let i = 0; i <= this.cart.length - 1; i++){
+          if((this.cart[i].cartItemId == data.cartItemId) &&  this.cart[i].number < 10) {
+            this.$store.commit('addNumber', data)
+            alert(`此商品已經購買${this.cart[i].number}件`)
+            return false
+          }
+          else if(this.cart[i].cartItemId == data.cartItemId &&  this.cart[i].number == 10) {
+            alert(`最多只能購買10件!`)
+            return false
+          }
+        }
+      this.$store.commit('addCart', data)
+      alert(`成功加入購物車!`)
     }
   }
 }
